@@ -133,3 +133,21 @@ if __name__ == "__main__":
     total_bigrams = {key : dict(counter) for key, counter in total_bigrams.items()} 
     with open('./data/bigram.json', 'w', encoding = 'utf-8') as file:
         json.dump(total_bigrams, file, ensure_ascii = False)
+
+    char2pinyin = defaultdict(list)
+    pinyin2char_file = './data/拼音汉字表.txt'
+    with open(pinyin2char_file, 'r', encoding = 'gbk', errors = 'ignore') as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split()
+            if len(parts) < 2:
+                continue
+            pinyin = parts[0]
+            characters = parts[1:]
+            for char in characters:
+                if pinyin not in char2pinyin[char]:
+                    char2pinyin[char].append(pinyin)
+    with open('./data/char2pinyin.json', 'w', encoding = 'utf-8') as file:
+        json.dump(char2pinyin, file, ensure_ascii = False, indent = 2)

@@ -21,6 +21,8 @@ with open('./data/unigram.json', 'r', encoding = 'utf-8') as file:
 total_count = sum(unigrams.values()) # 一元词的总出现次数
 with open('./data/bigram.json', 'r', encoding = 'utf-8') as file:
     bigrams = json.load(file) # 二元词和出现次数
+with open('./data/char2pinyin.json', 'r', encoding='utf-8') as file:
+    char2pinyin = json.load(file) # 格式: {"行": ["xing", "hang"]}
 
 lamb = 0.99 # 平滑参数， 0.99表示更依赖二元词，0.01表示更依赖一元词
 
@@ -35,10 +37,14 @@ for line in sys.stdin: # 输入
 
     for character in first_ans: # 取汉字
         count = unigrams.get(character, -1) # 得到汉字的出现次数
+
+        k = len(char2pinyin.get(character, [shuru[0]])) # 得到汉字对应的拼音数量
+        p_duoyin = 1.0 / k
+
         if count != -1: # 计算代价
-            cost = -math.log(count / total_count)
+            cost = -math.log(count / total_count) - math.log(p_duoyin)
         else:
-            cost = -math.log(0.5 / total_count)
+            cost = -math.log(0.5 / total_count) - math.log(p_duoyin) # 如果汉字没有出现过，使用一个较小的概率
         
         first_dict[character] = (cost, None) # 存储代价和前一个汉字（第一个位置没有前一个汉字，所以为None）
 
@@ -76,7 +82,10 @@ for line in sys.stdin: # 输入
                 
                 p = lamb * p2 + (1 - lamb) * p1
 
-                add_cost = -math.log(p) # 计算总代价
+                k = len(char2pinyin.get(character, [now_pinyin])) # 得到当前字对应的拼音数量
+                p_duoyin = 1.0 / k
+
+                add_cost = -math.log(p) - math.log(p_duoyin) # 计算总代价
 
                 total_cost = pre_cost + add_cost
 
