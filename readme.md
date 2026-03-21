@@ -1,0 +1,2 @@
+- 语料库默认只有新浪新闻，将SMP2020/usual_train_new.txt放在corpus文件夹之下，在终端输入```python src/statistic.py --weibo```，即可加上微博语料库生成词频表 
+- 

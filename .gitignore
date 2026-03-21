@@ -1,0 +1,6 @@
+corpus/
+data/*.json
+data/*.txt
+*.txt
+__pycache__/
+.DS_Store
