@@ -3,6 +3,9 @@ import math
 import json
 import os
 import subprocess
+import time
+
+
 if not os.path.exists('./data/unigram.json') or not os.path.exists('./data/bigram.json'):
     sys.stderr.write("正在生成统计数据...\n")
     sys.stderr.write("(语料库较大,需要一定时间,请耐心等待qaq)\n")
@@ -25,6 +28,8 @@ with open('./data/char2pinyin.json', 'r', encoding='utf-8') as file:
     char2pinyin = json.load(file) # 格式: {"行": ["xing", "hang"]}
 
 lamb = 0.99 # 平滑参数， 0.99表示更依赖二元词，0.01表示更依赖一元词
+
+# start_time = time.perf_counter()
 
 for line in sys.stdin: # 输入
     shuru = line.strip().split() # 切分
@@ -110,5 +115,15 @@ for line in sys.stdin: # 输入
         last_character = ans[i][last_character][1] # 更新为前一个汉字
     result.reverse() # 反转
     print(''.join(result)) # 输出 
-                
+
+# # 2. 停止计时探针
+# end_time = time.perf_counter()
+# decode_cost_time = end_time - start_time
+
+# # 3. 安全打印时间（输出到终端，不进文件）
+# print(f"🚀 501个测试样例全部解码完毕！", file=sys.stderr)
+# print(f"⏱️ 推理总耗时: {decode_cost_time:.4f} 秒", file=sys.stderr)
+# print(f"⚡ 平均每句耗时: {(decode_cost_time / 501) * 1000:.2f} 毫秒", file=sys.stderr)
+
+
         

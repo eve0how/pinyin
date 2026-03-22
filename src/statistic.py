@@ -3,6 +3,9 @@ from collections import Counter, defaultdict
 import re
 import os
 import sys
+import time
+
+# start_time = time.perf_counter()
 
 def get_valid_characters(filepath): # 读取一二级汉字表
     valid_characters = set()
@@ -115,7 +118,7 @@ if __name__ == "__main__":
         print("处理微博语料...")
         if os.path.exists(weibo_file):
             uni, bi = read_weibo(weibo_file, valid_characters)
-            weight = 500
+            weight = 2000 # 微博语料的权重，调大一点让它对统计结果有更明显的影响
 
             for key, value in uni.items():
                 total_unigrams[key] += value * weight
@@ -151,3 +154,19 @@ if __name__ == "__main__":
                     char2pinyin[char].append(pinyin)
     with open('./data/char2pinyin.json', 'w', encoding = 'utf-8') as file:
         json.dump(char2pinyin, file, ensure_ascii = False, indent = 2)
+
+# # 2. 停止计时探针
+# end_time = time.perf_counter()
+# train_cost_time = end_time - start_time
+
+# # 3. 自动计算生成文件的大小 (以 MB 为单位)
+# unigram_size = os.path.getsize('./data/unigram.json') / (1024 * 1024)
+# bigram_size = os.path.getsize('./data/bigram.json') / (1024 * 1024)
+# char2pinyin_size = os.path.getsize('./data/char2pinyin.json') / (1024 * 1024)
+
+# # 4. 打印最终的装杯数据
+# print(f"✅ 语料预处理完成！", file = sys.stderr)
+# print(f"⏱️ 词频表生成总耗时: {train_cost_time:.2f} 秒", file = sys.stderr)
+# print(f"📦 unigram.json 大小: {unigram_size:.2f} MB", file = sys.stderr)
+# print(f"📦 bigram.json 大小: {bigram_size:.2f} MB", file = sys.stderr)
+# print(f"📦 char2pinyin.json 大小: {char2pinyin_size:.2f} MB", file = sys.stderr)
