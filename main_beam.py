@@ -109,6 +109,10 @@ for line in sys.stdin: # 输入
                     choose_pre = pre_character
             now_dict[character] = (min_cost, choose_pre) # 存储当前字的最小代价和选择的前一个字
 
+        beam = 15 # beam search的宽度
+        if len(now_dict) > beam: # 如果当前字的候选列表超过beam宽度，进行剪枝
+            now_dict = dict(sorted(now_dict.items(), key = lambda x : x[1][0])[:beam])
+
         ans.append(now_dict) # 将当前位置的汉字和代价存储到ans中
 
     # 回溯找到最优路径
